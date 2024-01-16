@@ -54,7 +54,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🚀 App deployed to ${{ steps.output_app_url.outputs.url }}
+                    "text": "🚀 App deployed to ${{ steps.output_app_url.outputs.url }}"
                   }
                 }
               ]
