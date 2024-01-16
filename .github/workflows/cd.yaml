@@ -5,10 +5,6 @@ on:
     branches: [main]
 
 jobs:
-  run-test-and-build:
-    uses: ./.github/workflows/test.yaml
-    secrets: inherit
-
   bump-version:
     runs-on: ubuntu-latest
     steps:
@@ -27,8 +23,3 @@ jobs:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
-
-  run-deploy:
-    needs: run-test-and-build
-    uses: ./.github/workflows/deploy.yaml
-    secrets: inherit

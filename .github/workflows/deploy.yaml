@@ -1,10 +1,17 @@
 name: Deploy
 
 on:
-  workflow_call:
+  push:
+    branches: [main]
+    tags: [v*]
 
 jobs:
+  run-test-and-build:
+    uses: ./.github/workflows/test.yaml
+    secrets: inherit
+
   deploy:
+    needs: run-test-and-build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
