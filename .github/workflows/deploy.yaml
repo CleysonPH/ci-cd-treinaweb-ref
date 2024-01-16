@@ -39,3 +39,26 @@ jobs:
             docker compose pull
             docker compose up -d
             docker compose exec twtodos npx prisma migrate deploy
+
+      - name: Output App URL
+        id: output_app_url
+        run: echo "url=http://${{ secrets.DROPLET_HOST }}:3333" >> $GITHUB_OUTPUT
+
+      - name: Send Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🚀 App deployed to ${{ steps.output_app_url.outputs.url }}
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
