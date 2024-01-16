@@ -27,3 +27,15 @@ jobs:
         with:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/twtodos:latest, ${{ secrets.DOCKER_USERNAME }}/twtodos:${{ github.sha }}
+
+      - name: Deploy to DigitalOcean Droplet
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          password: ${{ secrets.DROPLET_PASSWORD }}
+          script: |
+            cd ${{ secrets.DROPLET_WORKDIR }}
+            docker compose pull
+            docker compose up -d
+            docker compose exec twtodos npx prisma migrate deploy
