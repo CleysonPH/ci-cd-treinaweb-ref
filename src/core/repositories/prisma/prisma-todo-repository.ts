@@ -20,4 +20,8 @@ export class PrismaTodoRepository implements TodoRepository {
     await prisma.todo.delete({ where: { id } });
   }
 
+  async update(todo: Todo, id: number): Promise<Todo | null> {
+    return await prisma.todo.update({ where: { id }, data: todo });
+  }
+
 }
