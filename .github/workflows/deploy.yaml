@@ -1,17 +1,10 @@
 name: Deploy
 
 on:
-  push:
-    branches: [main]
-    tags: [v**]
+  workflow_call:
 
 jobs:
-  run-test-and-build:
-    uses: ./.github/workflows/test.yaml
-    secrets: inherit
-
   deploy:
-    needs: run-test-and-build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,12 +16,6 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Docker Meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ secrets.DOCKER_USERNAME }}/twtodos
-
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
@@ -39,5 +26,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/twtodos:latest
