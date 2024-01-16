@@ -17,3 +17,7 @@ Content-Type: application/json
 ###
 
 DELETE http://localhost:3333/api/todos/1
+
+###
+
+PATCH http://localhost:3333/api/todos/1/done

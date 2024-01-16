@@ -1,8 +1,9 @@
-import { GetAllTodosUseCase } from '@/core/use-cases/get-all-todos-use-case';
-import { RepositoryFactory } from './repository-factory';
-import { GetTodoByIdUseCase } from '@/core/use-cases/get-todo-by-id-use-case';
 import { CreateTodoUseCase } from '@/core/use-cases/create-todo-use-case';
 import { DeleteTodoByIdUseCase } from '@/core/use-cases/delete-todo-by-id-use-case';
+import { GetAllTodosUseCase } from '@/core/use-cases/get-all-todos-use-case';
+import { GetTodoByIdUseCase } from '@/core/use-cases/get-todo-by-id-use-case';
+import { SetTodoHasDoneById } from '@/core/use-cases/set-todo-has-done-by-id';
+import { RepositoryFactory } from './repository-factory';
 
 export class UseCaseFactory {
 
@@ -10,6 +11,7 @@ export class UseCaseFactory {
   private static _getTodoByIdUseCaseInstance: GetTodoByIdUseCase;
   private static _createTodoUseCaseInstance: CreateTodoUseCase;
   private static _deleteTodoByIdUseCaseInstance: DeleteTodoByIdUseCase;
+  private static _setTodoHasDoneByIdUseCaseInstance: SetTodoHasDoneById;
 
   static get getAllTodosUseCase(): GetAllTodosUseCase {
     if (!this._getAllTodosUseCaseInstance) {
@@ -45,6 +47,15 @@ export class UseCaseFactory {
       );
     }
     return this._deleteTodoByIdUseCaseInstance;
+  }
+
+  static get setTodoHasDoneByIdUseCase(): SetTodoHasDoneById {
+    if (!this._setTodoHasDoneByIdUseCaseInstance) {
+      this._setTodoHasDoneByIdUseCaseInstance = new SetTodoHasDoneById(
+        RepositoryFactory.todoRepository
+      );
+    }
+    return this._setTodoHasDoneByIdUseCaseInstance;
   }
 
 }
