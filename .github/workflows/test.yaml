@@ -1,0 +1,63 @@
+name: Test and Build
+
+on:
+  workflow_call:
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+      - name: Check for ESLint errors
+        run: npm run lint
+
+      - name: Build Project
+        run: npm run build
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: build
+
+      - name: Run Tests
+        run: npm run test:coverage
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: coverage
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Send a Slack Message on Failure
+        uses: slackapi/slack-github-action@v1.24.0
+        if: failure()
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🛑 *<https://github.com/${{github.repository}}/actions/runs/${{ github.run_id }}|${{ github.workflow }} workflow run>* failed."
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

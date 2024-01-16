@@ -11,9 +11,7 @@ app.setErrorHandler(
   (error: FastifyError, _: FastifyRequest, reply: FastifyReply) => {
     if (error instanceof NotFoundError) {
       reply.status(404).send({ message: error.message });
-    }
-
-    if (error instanceof ZodError) {
+    } else if (error instanceof ZodError) {
       const errors = error.errors.map((error) => ({
         field: error.path.join('.'),
         error: error.message
@@ -21,9 +19,9 @@ app.setErrorHandler(
       reply
         .status(400)
         .send({ message: 'Validation error', errors });
+    } else {
+      console.error(error);
     }
-
-    console.error(error);
 
     reply.status(500).send({ message: 'Internal server error' });
   }
