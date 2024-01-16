@@ -28,15 +28,25 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/twtodos:latest, ${{ secrets.DOCKER_USERNAME }}/twtodos:${{ github.sha }}
 
+      # - name: Deploy to DigitalOcean Droplet
+      #   uses: appleboy/ssh-action@v1.0.3
+      #   with:
+      #     host: ${{ secrets.DROPLET_HOST }}
+      #     username: ${{ secrets.DROPLET_USERNAME }}
+      #     key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
+      #     passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
+      #     script: |
+      #       cd ${{ secrets.DROPLET_WORKDIR }}
+      #       docker compose pull
+      #       docker compose up -d
+      #       docker compose exec twtodos npx prisma migrate deploy
+
       - name: Deploy to DigitalOcean Droplet
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.DROPLET_HOST }}
-          username: ${{ secrets.DROPLET_USERNAME }}
-          key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
-          script: |
-            cd ${{ secrets.DROPLET_WORKDIR }}
-            docker compose pull
-            docker compose up -d
-            docker compose exec twtodos npx prisma migrate deploy
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo -n "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa ${{ secrets.DROPLET_HOST }} >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts ${{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_HOST }} 'cd ${{ secrets.DROPLET_WORKDIR }} && docker compose pull && docker compose up -d && docker compose exec twtodos npx prisma migrate deploy'
