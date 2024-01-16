@@ -35,9 +35,11 @@ describe('GetTodoByIdUseCase (Unit)', () => {
     sut = new SetTodoHasDoneById(todoRepository);
   });
 
-  it('should return a todo when a valid id is provided', async () => {
-    const todo = await sut.execute(1);
-    expect(todo).toEqual({ ...todos[0], done: true });
+  it('should set the todo as done', async () => {
+    await sut.execute(1);
+    const todo = await todoRepository.getById(1);
+    expect(todo).not.toBeNull();
+    expect(todo?.done).toBe(true);
   });
 
   it('should throw an error when an invalid id is provided', async () => {
