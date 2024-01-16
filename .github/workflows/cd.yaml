@@ -1,0 +1,15 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  run-test-and-build:
+    uses: ./.github/workflows/test.yaml
+    secrets: inherit
+
+  run-deploy:
+    needs: run-test-and-build
+    uses: ./.github/workflows/deploy.yaml
+    secrets: inherit
