@@ -49,4 +49,4 @@ jobs:
           echo -n "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -t rsa ${{ secrets.DROPLET_HOST }} >> ~/.ssh/known_hosts
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts ${{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_HOST }} 'cd ${{ secrets.DROPLET_WORKDIR }} && docker compose pull && docker compose up -d && docker compose exec twtodos npx prisma migrate deploy'
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }} 'cd ${{ secrets.DROPLET_WORKDIR }} && docker compose pull && docker compose up -d && docker compose exec twtodos npx prisma migrate deploy'
