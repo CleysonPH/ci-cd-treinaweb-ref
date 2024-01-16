@@ -3,12 +3,30 @@ name: CD
 on:
   push:
     branches: [main]
-    tags: [v*]
 
 jobs:
   run-test-and-build:
     uses: ./.github/workflows/test.yaml
     secrets: inherit
+
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Github Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
 
   run-deploy:
     needs: run-test-and-build
