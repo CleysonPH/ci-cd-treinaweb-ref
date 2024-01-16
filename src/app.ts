@@ -3,7 +3,7 @@ import { ZodError } from 'zod';
 import { apiRoutes } from './api/routes';
 import { NotFoundError } from './core/errors/not-found-error';
 
-export const app = fastify();
+  export const app = fastify();
 
 app.register(apiRoutes, { prefix: '/api' });
 
