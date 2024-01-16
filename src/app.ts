@@ -18,7 +18,7 @@ app.setErrorHandler(
       }));
       reply
         .status(400)
-        .send({ message: 'Validation error!', errors });
+        .send({ message: 'Validation error', errors });
     } else {
       console.error(error);
     }
